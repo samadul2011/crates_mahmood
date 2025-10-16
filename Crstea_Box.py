@@ -155,15 +155,19 @@ try:
         selected_crates_box = []
     
     # Filter data based on selections
-    if selected_supervisors and selected_crates_box:
-        filtered_data = data[
-            (data['Sales_Date'].dt.date >= start_date) &
-            (data['Sales_Date'].dt.date <= end_date) &
-            (data['Supervisor'].isin(selected_supervisors)) &
-            (data['Crates_Box'].isin(selected_crates_box))
-        ].copy()
-    else:
-        filtered_data = pd.DataFrame()
+    # Start with date filter
+    filtered_data = data[
+        (data['Sales_Date'].dt.date >= start_date) &
+        (data['Sales_Date'].dt.date <= end_date)
+    ].copy()
+    
+    # Apply supervisor filter if selections exist
+    if selected_supervisors:
+        filtered_data = filtered_data[filtered_data['Supervisor'].isin(selected_supervisors)]
+    
+    # Apply crates_box filter if selections exist
+    if selected_crates_box:
+        filtered_data = filtered_data[filtered_data['Crates_Box'].isin(selected_crates_box)]
     
     # Display metrics
     st.subheader("📈 Summary Metrics")
