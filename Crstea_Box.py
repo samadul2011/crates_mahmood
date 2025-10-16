@@ -1,6 +1,8 @@
 import streamlit as st
 import duckdb
 import pandas as pd
+import os
+import requests
 from datetime import datetime, timedelta
 
 @st.cache_resource
@@ -20,19 +22,11 @@ def get_duckdb():
 
     return duckdb.connect(db_filename)
 
-# Get connection
-#con = get_duckdb()
-
 # Page configuration
 st.set_page_config(page_title="Creates And Box Dashboard", layout="wide")
 
 # Title
 st.title("📊 Creates_Box Data Dashboard")
-
-# Connect to DuckDB database
-#@st.cache_resource
-#def get_connection():
-   #return duckdb.connect(r"C:\Users\dispatch\OneDrive - Atyab Food Industries\Samad\Python\Dispatch\disptach.duckdb")
 
 # Load data
 @st.cache_data
