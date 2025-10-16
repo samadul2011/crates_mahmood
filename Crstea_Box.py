@@ -58,6 +58,7 @@ def load_data():
     complete_df = conn.execute(query).fetchdf()
     df = complete_df[['Sales_Date', 'Route', 'Crates_Box', 'Crt_Box', 'Supervisor']]
     df['Sales_Date'] = pd.to_datetime(df['Sales_Date'])
+    df['Crt_Box'] = df['Crt_Box'].round(0)  # Round to whole numbers
     return df
 
 # ==============================================================
@@ -101,7 +102,7 @@ try:
     with col1:
         st.metric("Total Records", f"{len(filtered_data):,}")
     with col2:
-        st.metric("Total Crt_Box", f"{filtered_data['Crt_Box'].sum():,.2f}")
+        st.metric("Total Crt_Box", f"{filtered_data['Crt_Box'].sum():,.0f}")
     with col3:
         st.metric("Unique Routes", f"{filtered_data['Route'].nunique()}")
     with col4:
@@ -119,10 +120,11 @@ try:
         pivot_table = pivot_data.pivot(index='Route', columns='Sales_Date', values='Crt_Box')
         pivot_table.columns = [col.strftime('%Y-%m-%d') for col in pivot_table.columns]
         pivot_table['Total'] = pivot_table.sum(axis=1)
-        pivot_table = pivot_table.sort_values('Total', ascending=False)
+        pivot_table = pivot_table.sort_values('Total', ascending=False).round(0)
 
+        # Display pivot table (no matplotlib)
         st.dataframe(
-            pivot_table.style.format("{:.2f}").background_gradient(cmap='YlOrRd', axis=None),
+            pivot_table.style.format("{:,.0f}"),  # Show rounded integers with commas
             use_container_width=True,
             height=400
         )
