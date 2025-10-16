@@ -65,6 +65,9 @@ def load_data():
         # Convert Sales_Date to datetime if it's not already
         df['Sales_Date'] = pd.to_datetime(df['Sales_Date'], errors='coerce')
         
+        # Round Crt_Box to 2 decimal places
+        df['Crt_Box'] = df['Crt_Box'].round(2)
+        
         # Remove rows with invalid dates
         df = df.dropna(subset=['Sales_Date'])
         
@@ -129,7 +132,16 @@ try:
     
     # Crates_Box filter
     st.sidebar.subheader("Crates/Box")
-    crates_box = sorted([float(c) for c in data['Crates_Box'].dropna().unique().tolist()])
+    # Filter out non-numeric values and convert to float
+    crates_box_raw = data['Crates_Box'].dropna().unique()
+    crates_box = []
+    for c in crates_box_raw:
+        try:
+            crates_box.append(float(c))
+        except (ValueError, TypeError):
+            # Skip non-numeric values
+            pass
+    crates_box = sorted(crates_box)
     
     if crates_box:
         selected_crates_box = st.sidebar.multiselect(
